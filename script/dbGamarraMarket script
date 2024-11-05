@@ -1,0 +1,97 @@
+/*creando la base de datos*/
+create database dbGamarraMarket;
+
+/*poniendo en uso la base de datos*/
+use dbGamarraMarket;
+
+/*creamos la primera tabla de la base de datos*/
+create table cliente(
+	id int,
+    tipo_documento char(3) not null,
+    numero_documento char(9) not null,
+    nombres varchar(60) not null,
+    apellidos varchar(90) not null,
+    genero char(1) not null,
+    email varchar(80),
+    celular char(9),
+    fecha_nacimiento date,
+    activo bool,
+    constraint cliente_pk primary key (id)
+);
+
+/*verificamos que las columnas de la tabla esten creadas correctamente*/
+show columns in cliente;
+
+/*creamos las tabla venta*/
+create table venta(
+	id int primary key,
+    fecha_hora timestamp,
+    activo bool,
+    cliente_id int,
+    vendedor_id int
+);
+
+/*creamos la tabla vendedor*/
+create table vendedor(
+	id int primary key,
+    tipo_documento char(3),
+    numero_documento char(15),
+    nombres varchar(60),
+    apellidos varchar(80),
+    salario decimal(8.2),
+    genero char(1),
+    email varchar(80),
+    celular char(9),
+    activo bool
+);
+
+/*creamos la tabla venta detalle*/
+create table venta_detalle(
+	id int primary key,
+    cantidad int,
+    venta_id int,
+    prenda_id int
+);
+
+/*creamos la tabla prenda*/
+create table prenda(
+	id int primary key,
+    descripcion varchar(90),
+    marca varchar(60),
+    cantidad int,
+    talla varchar(10),
+    precio decimal(8.2),
+    activo bool
+);
+
+/*creamos las relaciones entre la tabla venta y cliente*/
+alter table venta
+		add constraint venta_cliente foreign key (cliente_id)
+    references cliente (id)
+    on update cascade
+    on delete cascade
+	;
+
+/*creamos la relacion entre la tabla vendedor y venta*/
+alter table venta
+		add constraint venta_vendedor foreign key (vendedor_id)
+    references vendedor (id)
+    on update cascade
+    on delete cascade
+    ;
+    
+/*creamos la relacion entre la tabla venta y venta_detalle*/
+alter table venta_detalle
+		add constraint venta_detalle__vendedor foreign key (venta_id)
+    references venta (id)
+    on update cascade
+    on delete cascade
+    ;
+	
+/*creamos la relacion entre la tabla prenda y venta_detalle*/
+alter table venta_detalle
+		add constraint venta_detalle__prenda foreign key (prenda_id)
+    references prenda (id)
+    on update cascade
+    on delete cascade
+    ;
